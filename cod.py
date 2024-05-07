@@ -145,4 +145,60 @@ fig6.add_trace(go.Pie(labels=['Não Pago', 'Pago'], values=df6, hole=.6))
 fig6.show()
 
 #%%
-# gerando grafico ...continuar 6:58
+df7 = df.groupby(['Consultor', 'Equipe'])['Valor Pago'].sum()
+df7.sort_values(ascending=False, inplace=True)
+df7 = df7.reset_index()
+
+
+fig7 = go.Figure()
+fig7.add_trace(go.Indicator(mode='number+delta',
+               title = {"text": f"<span style='font-size:150%'>{df7['Consultor'].iloc[0]} - Top Consultant</span><br><span style='font-size:70%'>Em vendas - em relação a média</span><br>"},
+                    value = df7['Valor Pago'].iloc[0],
+        number = {'prefix': "R$"},
+        delta = {'relative': True, 'valueformat': '.1%', 'reference': df7['Valor Pago'].mean()}
+    ))
+# %%
+df8 = df.groupby('Equipe')['Valor Pago'].sum()
+df8.sort_values(ascending=False, inplace=True)
+df8 = df8.reset_index()
+
+fig8 = go.Figure()
+fig8.add_trace(go.Indicator(mode='number+delta',
+    title = {"text": f"<span>{df8['Equipe'].iloc[0]} - Top Team</span><br><span style='font-size:70%'>Em vendas - em relação a média</span><br>"},
+    value = df8['Valor Pago'].iloc[0],
+    number = {'prefix': "R$"},
+    delta = {'relative': True, 'valueformat': '.1%', 'reference': df8['Valor Pago'].mean()}
+))
+
+# %%
+fig9 = go.Figure()
+fig9.add_trace(go.Indicator(mode='number',
+    title = {"text": f"<span style='font-size:150%'>Valor Total</span><br><span style='font-size:70%'>Em Reais</span><br>"},
+    value = df8['Valor Pago'].sum(),
+    number={'prefix': "R$"}
+))
+# %%
+fig10 = go.Figure()
+fig10.add_trace(go.Indicator(mode='number',
+    title = {"text": f"<span style='font-size:150%'>Chamadas Realizadas</span><br>"},
+    value = len(df[df['Status de Pagamento'] == 1])
+))
+# %%
+df13 = df.groupby(['Equipe','Consultor'])['Valor Pago'].sum()
+df13 = df13.sort_values(ascending=False)
+df13 = df13.groupby('Equipe').head(1).reset_index()
+df13_sorted = df13.sort_values(by='Valor Pago', ascending=False)
+
+# fig13 = go.Figure(go.Pie(labels=df13['Consultor'] + ' - '+ df13['Equipe'], values=df13['Valor Pago'], hole=.6))
+# fig13.show()
+fig13 = go.Figure(go.Bar(
+    y=df13_sorted['Consultor'] + ' - ' + df13['Equipe'],
+    x=df13_sorted['Valor Pago'],
+    orientation='h'
+))
+
+fig13.show()
+# %%
+fig14 = go.Figure(go.Bar(x=df13['Consultor'], y=df13['Valor Pago'], textposition='auto', text=df13['Valor Pago']))
+fig14.show()
+# %%
